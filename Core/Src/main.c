@@ -1330,6 +1330,10 @@ void StartDefaultTask(void *argument)
 
 		// check no-comm timer, used to go to bootsplash automatically
 		commtimer++;
+		// tick interval is approx 5 ms (200 Hz), wait approx. 1 minute before restarting
+		// in case the problem is local
+		if (commtimer > (60 * 200))
+			HAL_NVIC_SystemReset();
 		// this check relies on the UART RX callback swapping the pointers for us
 		if (validdisplay != olddata)
 			commtimer = 0;
