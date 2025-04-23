@@ -1330,6 +1330,7 @@ void StartDefaultTask(void *argument)
 
 		// check no-comm timer, used to go to bootsplash automatically
 		commtimer++;
+		// this check relies on the UART RX callback swapping the pointers for us
 		if (validdisplay != olddata)
 			commtimer = 0;
 
@@ -1413,11 +1414,11 @@ void StartDefaultTask(void *argument)
 		}
 
 		// show bootsplash on startup and when loss of comms
+		if (bootsplashtimer > 0)
+			bootsplashtimer--;
 
 		if (bootsplashtimer > 0 || commtimer > 200)
 		{
-			bootsplashtimer--;
-
 			memcpy(&image[0][0], &epd_bitmap_Bootsplash_copy[0], LCD_WIDTH);
 			memcpy(&image[1][0], &epd_bitmap_Bootsplash_copy[LCD_WIDTH],
 					LCD_WIDTH);
@@ -1425,7 +1426,6 @@ void StartDefaultTask(void *argument)
 					LCD_WIDTH);
 			memcpy(&image[3][0], &epd_bitmap_Bootsplash_copy[(LCD_WIDTH * 3)],
 					LCD_WIDTH);
-			//memcpy(&image[4][0],&epd_bitmap_Bootsplash_copy[512], 128);
 		}
 
 		// flash image to LCD
